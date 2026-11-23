@@ -42,6 +42,10 @@ def friendly_error(exc):
     low = msg.lower()
     if "private" in low:
         return "This video is private, so it can't be downloaded."
+    if "failed to extract" in low or "player response" in low:
+        return ("YouTube refused the request from this server's network - "
+                "a common block on hosting-company IPs. The video itself is "
+                "fine; the same link works in the Termux version on the phone.")
     if "sign in" in low or "bot" in low or "login" in low:
         return ("YouTube is asking for a sign-in check on this video. "
                 "Try a different video, or update yt-dlp: pip install -U yt-dlp")
@@ -103,7 +107,8 @@ def api_info():
     if not url or ("youtube.com" not in url and "youtu.be" not in url):
         return jsonify(error="Please paste a valid YouTube link (youtube.com or youtu.be)."), 400
     try:
-        with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True, "noplaylist": True}) as ydl:
+        with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True, "noplaylist": True,
+                               "extractor_args": {"youtube": {"player_client": ["android_vr", "tv", "web_safari"]}}}) as ydl:
             info = ydl.extract_info(url, download=False)
     except Exception as exc:  # yt-dlp raises many types; turn them into a friendly message
         return jsonify(error=friendly_error(exc)), 422
@@ -154,6 +159,7 @@ def run_download(job_id, url, kind, height):
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,
+        "extractor_args": {"youtube": {"player_client": ["android_vr", "tv", "web_safari"]}},
         "format": fmt,
         "merge_output_format": "mp4",
         "outtmpl": os.path.join(DOWNLOAD_DIR, "%(title).80s [%(id)s].%(ext)s"),
