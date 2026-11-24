@@ -1,0 +1,39 @@
+YTSnatch - the working public version (phone-powered)
+======================================================
+
+Why this exists: YouTube blocks downloads from hosting-company
+servers (that's why the Render copy can open the page but can't
+fetch videos). Your phone's own connection is NOT blocked, so this
+version runs the website on the phone and shares it through a free
+Cloudflare tunnel. Same website, same features - the phone is the
+engine, exactly like the big downloader sites use home connections.
+
+ONE-TIME SETUP (Termux)
+-----------------------
+1. Install the tunnel tool:
+
+   pkg install -y cloudflared
+
+2. Make the launcher runnable:
+
+   chmod +x ~/tubefetch-deploy/start-ytsnatch.sh
+
+EVERY TIME YOU WANT THE PUBLIC SITE
+-----------------------------------
+1. Run:
+
+   ~/tubefetch-deploy/start-ytsnatch.sh
+
+2. Wait a few seconds. A public link appears, ending in
+   .trycloudflare.com - that's your website, live for anyone.
+
+3. Keep that Termux session open while using the site.
+   CTRL+C in that session shuts the public site down.
+
+Notes
+-----
+- The link is different every time you start the tunnel (free tier).
+- The phone must stay on, with Termux alive - use the wake-lock and
+  battery-Unrestricted setting so Android doesn't kill it.
+- Downloads land in this folder's Downloads/ folder on the phone,
+  and the "Save video to this device" button also works for visitors.

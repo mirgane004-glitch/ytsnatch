@@ -108,7 +108,7 @@ def api_info():
         return jsonify(error="Please paste a valid YouTube link (youtube.com or youtu.be)."), 400
     try:
         with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True, "noplaylist": True,
-                               "extractor_args": {"youtube": {"player_client": ["android_vr", "tv", "web_safari"]}}}) as ydl:
+                               "extractor_args": {"youtube": {"player_client": ["android_vr", "ios", "tv", "web_safari", "mweb"]}}}) as ydl:
             info = ydl.extract_info(url, download=False)
     except Exception as exc:  # yt-dlp raises many types; turn them into a friendly message
         return jsonify(error=friendly_error(exc)), 422
@@ -159,7 +159,7 @@ def run_download(job_id, url, kind, height):
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,
-        "extractor_args": {"youtube": {"player_client": ["android_vr", "tv", "web_safari"]}},
+        "extractor_args": {"youtube": {"player_client": ["android_vr", "ios", "tv", "web_safari", "mweb"]}},
         "format": fmt,
         "merge_output_format": "mp4",
         "outtmpl": os.path.join(DOWNLOAD_DIR, "%(title).80s [%(id)s].%(ext)s"),
